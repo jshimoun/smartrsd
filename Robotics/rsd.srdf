@@ -1,0 +1,921 @@
+<?xml version="1.0" ?>
+<!--This does not replace URDF, and is not an extension of URDF.
+    This is a format for representing semantic information about the robot structure.
+    A URDF file must exist for this robot as well, where the joints and the links that are referenced are defined
+-->
+<robot name="rsd">
+    <!--GROUPS: Representation of a set of joints and links. This can be useful for specifying DOF to plan for, defining arms, end effectors, etc-->
+    <!--LINKS: When a link is specified, the parent joint of that link (if it exists) is automatically included-->
+    <!--JOINTS: When a joint is specified, the child link of that joint (which will always exist) is automatically included-->
+    <!--CHAINS: When a chain is specified, all the links along the chain (including endpoints) are included in the group. Additionally, all the joints that are parents to included links are also included. This means that joints along the chain and the parent joint of the base link are included in the group-->
+    <!--SUBGROUPS: Groups can also be formed by referencing to already defined group names-->
+    <group name="grapple_mechanism">
+        <joint name="base_to_grapple" />
+        <joint name="grapple_to_grapple2" />
+    </group>
+    <group name="camera_boom">
+        <joint name="boom1_to_boom2" />
+        <joint name="boom2_to_boom3" />
+        <joint name="boom3_to_boom4" />
+        <joint name="boom4_to_boom5" />
+        <joint name="boom5_to_boom6" />
+        <joint name="boom6_to_boom7" />
+        <joint name="boom7_to_boom8" />
+        <joint name="boom8_to_boom9" />
+        <joint name="boom9_to_boom10" />
+        <joint name="boom10_to_camera" />
+    </group>
+    <group name="end_effector">
+        <joint name="wrist3_to_gripper_base2" />
+        <joint name="wrist3_to_gripper_base3" />
+        <joint name="wrist3_to_gripper_base" />
+    </group>
+    <group name="gripper">
+        <joint name="arm_toolplate_to_finger3" />
+        <joint name="toolplate_to_arm_2_finger" />
+        <joint name="toolplate_to_arm_finger1" />
+    </group>
+    <group name="arm">
+        <joint name="link1_to_base" />
+        <joint name="connectlink_to_shoulder" />
+        <joint name="link2_to_elbow" />
+        <joint name="link3_to_wrist" />
+        <joint name="wrist_to_wrist2" />
+        <joint name="wrist2_to_wrist3" />
+    </group>
+    <group name="left_body_gripper">
+        <joint name="toolplate_to_left_finger1" />
+        <joint name="toolplate_to_left_2_finger" />
+        <joint name="left_toolplate_to_finger3" />
+    </group>
+    <group name="right_body_gripper">
+        <joint name="right_toolplate_to_finger3" />
+        <joint name="toolplate_to_right_2_finger" />
+        <joint name="toolplate_to_right_finger1" />
+    </group>
+    <!--GROUP STATES: Purpose: Define a named state for a particular group, in terms of joint values. This is useful to define states like 'folded arms'-->
+    <group_state name="grapple_stowed" group="grapple_mechanism">
+        <joint name="base_to_grapple" value="0" />
+        <joint name="grapple_to_grapple2" value="0" />
+    </group_state>
+    <group_state name="grapple_extend1" group="grapple_mechanism">
+        <joint name="base_to_grapple" value="-1.5707" />
+        <joint name="grapple_to_grapple2" value="0" />
+    </group_state>
+    <group_state name="grapple_extend2" group="grapple_mechanism">
+        <joint name="base_to_grapple" value="-1.5707" />
+        <joint name="grapple_to_grapple2" value="-0.5" />
+    </group_state>
+    <group_state name="camera_stowed" group="camera_boom">
+        <joint name="boom1_to_boom2" value="0" />
+        <joint name="boom2_to_boom3" value="0" />
+        <joint name="boom3_to_boom4" value="0" />
+        <joint name="boom4_to_boom5" value="0" />
+        <joint name="boom5_to_boom6" value="0" />
+        <joint name="boom6_to_boom7" value="0" />
+        <joint name="boom7_to_boom8" value="0" />
+        <joint name="boom8_to_boom9" value="0" />
+        <joint name="boom9_to_boom10" value="0" />
+    </group_state>
+    <group_state name="camera_extended" group="camera_boom">
+        <joint name="boom1_to_boom2" value="0.3" />
+        <joint name="boom2_to_boom3" value="0.3" />
+        <joint name="boom3_to_boom4" value="0.3" />
+        <joint name="boom4_to_boom5" value="0.3" />
+        <joint name="boom5_to_boom6" value="0.3" />
+        <joint name="boom6_to_boom7" value="0.3" />
+        <joint name="boom7_to_boom8" value="0.3" />
+        <joint name="boom8_to_boom9" value="0.3" />
+        <joint name="boom9_to_boom10" value="0.3" />
+    </group_state>
+    <group_state name="ee_gripper" group="end_effector">
+        <joint name="wrist3_to_gripper_base" value="0" />
+        <joint name="wrist3_to_gripper_base2" value="0" />
+        <joint name="wrist3_to_gripper_base3" value="0" />
+    </group_state>
+    <group_state name="ee_toolplate" group="end_effector">
+        <joint name="wrist3_to_gripper_base" value="1.5707" />
+        <joint name="wrist3_to_gripper_base2" value="0" />
+        <joint name="wrist3_to_gripper_base3" value="1.5707" />
+    </group_state>
+    <group_state name="left_body_closed" group="left_body_gripper">
+        <joint name="left_toolplate_to_finger3" value="0" />
+        <joint name="toolplate_to_left_2_finger" value="0" />
+        <joint name="toolplate_to_left_finger1" value="0" />
+    </group_state>
+    <group_state name="left_body_open" group="left_body_gripper">
+        <joint name="left_toolplate_to_finger3" value="-0.3926" />
+        <joint name="toolplate_to_left_2_finger" value="-0.3926" />
+        <joint name="toolplate_to_left_finger1" value="0.3926" />
+    </group_state>
+    <group_state name="right_body_closed" group="right_body_gripper">
+        <joint name="right_toolplate_to_finger3" value="0" />
+        <joint name="toolplate_to_right_2_finger" value="0" />
+        <joint name="toolplate_to_right_finger1" value="0" />
+    </group_state>
+    <group_state name="right_body_open" group="right_body_gripper">
+        <joint name="right_toolplate_to_finger3" value="-0.3926" />
+        <joint name="toolplate_to_right_2_finger" value="-0.3926" />
+        <joint name="toolplate_to_right_finger1" value="0.3926" />
+    </group_state>
+    <group_state name="gripper_closed" group="gripper">
+        <joint name="arm_toolplate_to_finger3" value="0" />
+        <joint name="toolplate_to_arm_2_finger" value="0" />
+        <joint name="toolplate_to_arm_finger1" value="0" />
+    </group_state>
+    <group_state name="gripper_open" group="gripper">
+        <joint name="arm_toolplate_to_finger3" value="-0.3926" />
+        <joint name="toolplate_to_arm_2_finger" value="-0.3926" />
+        <joint name="toolplate_to_arm_finger1" value="0.3926" />
+    </group_state>
+    <group_state name="arm_stowed" group="arm">
+        <joint name="connectlink_to_shoulder" value="-3.9268" />
+        <joint name="link1_to_base" value="0" />
+        <joint name="link2_to_elbow" value="2.3561" />
+        <joint name="link3_to_wrist" value="1.5707" />
+        <joint name="wrist2_to_wrist3" value="0" />
+        <joint name="wrist_to_wrist2" value="-1.5707" />
+    </group_state>
+    <group_state name="arm_1_3_10_12_compprep" group="arm">
+        <joint name="connectlink_to_shoulder" value="-1.5449" />
+        <joint name="link1_to_base" value="0.5524" />
+        <joint name="link2_to_elbow" value="1.5276" />
+        <joint name="link3_to_wrist" value="0.0345" />
+        <joint name="wrist2_to_wrist3" value="1.1" />
+        <joint name="wrist_to_wrist2" value="-0.5" />
+    </group_state>
+    <group_state name="arm_2_11_compgrab" group="arm">
+        <joint name="connectlink_to_shoulder" value="-1.286" />
+        <joint name="link1_to_base" value="0.4833" />
+        <joint name="link2_to_elbow" value="1.2169" />
+        <joint name="link3_to_wrist" value="0.1036" />
+        <joint name="wrist2_to_wrist3" value="1.1" />
+        <joint name="wrist_to_wrist2" value="-0.466" />
+    </group_state>
+    <group_state name="arm_4_6_above_left_gripper" group="arm">
+        <joint name="connectlink_to_shoulder" value="-1.6484" />
+        <joint name="link1_to_base" value="0.863" />
+        <joint name="link2_to_elbow" value="-1.9159" />
+        <joint name="link3_to_wrist" value="-1.1392" />
+        <joint name="wrist2_to_wrist3" value="0" />
+        <joint name="wrist_to_wrist2" value="0" />
+    </group_state>
+    <group_state name="arm_5_left_comp_place" group="arm">
+        <joint name="connectlink_to_shoulder" value="-1.7904" />
+        <joint name="link1_to_base" value="0.863" />
+        <joint name="link2_to_elbow" value="-2.0655" />
+        <joint name="link3_to_wrist" value="-0.8802" />
+        <joint name="wrist2_to_wrist3" value="0" />
+        <joint name="wrist_to_wrist2" value="0" />
+    </group_state>
+    <group_state name="arm_7_9_above_right_gripper" group="arm">
+        <joint name="connectlink_to_shoulder" value="-1.8038" />
+        <joint name="link1_to_base" value="0.4143" />
+        <joint name="link2_to_elbow" value="-1.7606" />
+        <joint name="link3_to_wrist" value="-1.1392" />
+        <joint name="wrist2_to_wrist3" value="0" />
+        <joint name="wrist_to_wrist2" value="0" />
+    </group_state>
+    <group_state name="arm_8_right_comp_grab" group="arm">
+        <joint name="connectlink_to_shoulder" value="-1.8674" />
+        <joint name="link1_to_base" value="0.3797" />
+        <joint name="link2_to_elbow" value="-1.9335" />
+        <joint name="link3_to_wrist" value="-0.8802" />
+        <joint name="wrist2_to_wrist3" value="0" />
+        <joint name="wrist_to_wrist2" value="0" />
+    </group_state>
+    <group_state name="arm_13_change_spot" group="arm">
+        <joint name="connectlink_to_shoulder" value="-1.3636" />
+        <joint name="link1_to_base" value="0" />
+        <joint name="link2_to_elbow" value="2.3561" />
+        <joint name="link3_to_wrist" value="-1.0011" />
+        <joint name="wrist2_to_wrist3" value="0" />
+        <joint name="wrist_to_wrist2" value="0" />
+    </group_state>
+    <group_state name="arm_14_tool1" group="arm">
+        <joint name="connectlink_to_shoulder" value="-0.1727" />
+        <joint name="link1_to_base" value="-0.863" />
+        <joint name="link2_to_elbow" value="1.0615" />
+        <joint name="link3_to_wrist" value="-1.1047" />
+        <joint name="wrist2_to_wrist3" value="0" />
+        <joint name="wrist_to_wrist2" value="1.5189" />
+    </group_state>
+    <group_state name="arm_15_tool2" group="arm">
+        <joint name="connectlink_to_shoulder" value="-0.7681" />
+        <joint name="link1_to_base" value="-0.6904" />
+        <joint name="link2_to_elbow" value="0.233" />
+        <joint name="link3_to_wrist" value="-0.4833" />
+        <joint name="wrist2_to_wrist3" value="1.0356" />
+        <joint name="wrist_to_wrist2" value="0.397" />
+    </group_state>
+    <group_state name="arm_16_tool3" group="arm">
+        <joint name="connectlink_to_shoulder" value="0.7853" />
+        <joint name="link1_to_base" value="0.3452" />
+        <joint name="link2_to_elbow" value="-0.2071" />
+        <joint name="link3_to_wrist" value="-0.8976" />
+        <joint name="wrist2_to_wrist3" value="-0.9666" />
+        <joint name="wrist_to_wrist2" value="0.069" />
+    </group_state>
+    <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
+    <end_effector name="end_effector" parent_link="wrist3" group="end_effector" />
+    <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
+    <virtual_joint name="virtual_joint" type="planar" parent_frame="odom_combined" child_link="base_link" />
+    <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
+    <disable_collisions link1="1_toolplate" link2="arm_1_1_finger" reason="Never" />
+    <disable_collisions link1="1_toolplate" link2="arm_2_1_finger" reason="Never" />
+    <disable_collisions link1="1_toolplate" link2="arm_3_1_finger" reason="Never" />
+    <disable_collisions link1="1_toolplate" link2="arm_toolplate" reason="Default" />
+    <disable_collisions link1="1_toolplate" link2="grapple" reason="Never" />
+    <disable_collisions link1="1_toolplate" link2="grapple2" reason="Never" />
+    <disable_collisions link1="1_toolplate" link2="gripper_base" reason="Default" />
+    <disable_collisions link1="1_toolplate" link2="wrist" reason="Never" />
+    <disable_collisions link1="1_toolplate" link2="wrist2" reason="Never" />
+    <disable_collisions link1="1_toolplate" link2="wrist3" reason="Adjacent" />
+    <disable_collisions link1="2_toolplate" link2="arm_1_1_finger" reason="Never" />
+    <disable_collisions link1="2_toolplate" link2="arm_2_1_finger" reason="Never" />
+    <disable_collisions link1="2_toolplate" link2="arm_3_1_finger" reason="Never" />
+    <disable_collisions link1="2_toolplate" link2="arm_toolplate" reason="Default" />
+    <disable_collisions link1="2_toolplate" link2="grapple" reason="Never" />
+    <disable_collisions link1="2_toolplate" link2="grapple2" reason="Never" />
+    <disable_collisions link1="2_toolplate" link2="gripper_base" reason="Default" />
+    <disable_collisions link1="2_toolplate" link2="left_2_1_finger" reason="Never" />
+    <disable_collisions link1="2_toolplate" link2="wrist" reason="Never" />
+    <disable_collisions link1="2_toolplate" link2="wrist2" reason="Never" />
+    <disable_collisions link1="2_toolplate" link2="wrist3" reason="Adjacent" />
+    <disable_collisions link1="arm_1_1_finger" link2="arm_1_finger" reason="Adjacent" />
+    <disable_collisions link1="arm_1_1_finger" link2="arm_2_1_finger" reason="Never" />
+    <disable_collisions link1="arm_1_1_finger" link2="arm_2_finger" reason="Never" />
+    <disable_collisions link1="arm_1_1_finger" link2="arm_3_1_finger" reason="Never" />
+    <disable_collisions link1="arm_1_1_finger" link2="arm_3_finger" reason="Never" />
+    <disable_collisions link1="arm_1_1_finger" link2="arm_toolplate" reason="Never" />
+    <disable_collisions link1="arm_1_1_finger" link2="grapple" reason="Never" />
+    <disable_collisions link1="arm_1_1_finger" link2="grapple2" reason="Never" />
+    <disable_collisions link1="arm_1_1_finger" link2="gripper_base" reason="Never" />
+    <disable_collisions link1="arm_1_1_finger" link2="left_1_1_finger" reason="Never" />
+    <disable_collisions link1="arm_1_1_finger" link2="left_1_finger" reason="Never" />
+    <disable_collisions link1="arm_1_1_finger" link2="left_3_1_finger" reason="Never" />
+    <disable_collisions link1="arm_1_1_finger" link2="left_3_finger" reason="Never" />
+    <disable_collisions link1="arm_1_1_finger" link2="right_1_1_finger" reason="Never" />
+    <disable_collisions link1="arm_1_1_finger" link2="right_2_finger" reason="Never" />
+    <disable_collisions link1="arm_1_1_finger" link2="wrist" reason="Never" />
+    <disable_collisions link1="arm_1_1_finger" link2="wrist2" reason="Never" />
+    <disable_collisions link1="arm_1_1_finger" link2="wrist3" reason="Never" />
+    <disable_collisions link1="arm_1_finger" link2="arm_2_1_finger" reason="Never" />
+    <disable_collisions link1="arm_1_finger" link2="arm_2_finger" reason="Never" />
+    <disable_collisions link1="arm_1_finger" link2="arm_3_1_finger" reason="Never" />
+    <disable_collisions link1="arm_1_finger" link2="arm_3_finger" reason="Never" />
+    <disable_collisions link1="arm_1_finger" link2="arm_toolplate" reason="Adjacent" />
+    <disable_collisions link1="arm_1_finger" link2="grapple" reason="Never" />
+    <disable_collisions link1="arm_1_finger" link2="grapple2" reason="Never" />
+    <disable_collisions link1="arm_1_finger" link2="gripper_base" reason="Never" />
+    <disable_collisions link1="arm_1_finger" link2="left_1_1_finger" reason="Never" />
+    <disable_collisions link1="arm_1_finger" link2="left_3_1_finger" reason="Never" />
+    <disable_collisions link1="arm_1_finger" link2="left_3_finger" reason="Never" />
+    <disable_collisions link1="arm_1_finger" link2="right_1_1_finger" reason="Never" />
+    <disable_collisions link1="arm_1_finger" link2="right_1_finger" reason="Never" />
+    <disable_collisions link1="arm_1_finger" link2="right_2_1_finger" reason="Never" />
+    <disable_collisions link1="arm_1_finger" link2="right_2_finger" reason="Never" />
+    <disable_collisions link1="arm_1_finger" link2="right_3_1_finger" reason="Never" />
+    <disable_collisions link1="arm_1_finger" link2="right_3_finger" reason="Never" />
+    <disable_collisions link1="arm_1_finger" link2="wrist" reason="Never" />
+    <disable_collisions link1="arm_1_finger" link2="wrist2" reason="Never" />
+    <disable_collisions link1="arm_1_finger" link2="wrist3" reason="Never" />
+    <disable_collisions link1="arm_2_1_finger" link2="arm_2_finger" reason="Adjacent" />
+    <disable_collisions link1="arm_2_1_finger" link2="arm_3_1_finger" reason="Never" />
+    <disable_collisions link1="arm_2_1_finger" link2="arm_3_finger" reason="Never" />
+    <disable_collisions link1="arm_2_1_finger" link2="arm_toolplate" reason="Never" />
+    <disable_collisions link1="arm_2_1_finger" link2="grapple" reason="Never" />
+    <disable_collisions link1="arm_2_1_finger" link2="grapple2" reason="Never" />
+    <disable_collisions link1="arm_2_1_finger" link2="gripper_base" reason="Never" />
+    <disable_collisions link1="arm_2_1_finger" link2="left_1_1_finger" reason="Never" />
+    <disable_collisions link1="arm_2_1_finger" link2="left_2_1_finger" reason="Never" />
+    <disable_collisions link1="arm_2_1_finger" link2="left_2_finger" reason="Never" />
+    <disable_collisions link1="arm_2_1_finger" link2="left_3_1_finger" reason="Never" />
+    <disable_collisions link1="arm_2_1_finger" link2="right_1_finger" reason="Never" />
+    <disable_collisions link1="arm_2_1_finger" link2="right_3_1_finger" reason="Never" />
+    <disable_collisions link1="arm_2_1_finger" link2="right_3_finger" reason="Never" />
+    <disable_collisions link1="arm_2_1_finger" link2="wrist" reason="Never" />
+    <disable_collisions link1="arm_2_1_finger" link2="wrist2" reason="Never" />
+    <disable_collisions link1="arm_2_1_finger" link2="wrist3" reason="Never" />
+    <disable_collisions link1="arm_2_finger" link2="arm_3_1_finger" reason="Never" />
+    <disable_collisions link1="arm_2_finger" link2="arm_3_finger" reason="Never" />
+    <disable_collisions link1="arm_2_finger" link2="arm_toolplate" reason="Adjacent" />
+    <disable_collisions link1="arm_2_finger" link2="grapple" reason="Never" />
+    <disable_collisions link1="arm_2_finger" link2="grapple2" reason="Never" />
+    <disable_collisions link1="arm_2_finger" link2="gripper_base" reason="Never" />
+    <disable_collisions link1="arm_2_finger" link2="left_1_1_finger" reason="Never" />
+    <disable_collisions link1="arm_2_finger" link2="left_2_1_finger" reason="Never" />
+    <disable_collisions link1="arm_2_finger" link2="left_2_finger" reason="Never" />
+    <disable_collisions link1="arm_2_finger" link2="left_3_finger" reason="Never" />
+    <disable_collisions link1="arm_2_finger" link2="right_1_1_finger" reason="Never" />
+    <disable_collisions link1="arm_2_finger" link2="right_1_finger" reason="Never" />
+    <disable_collisions link1="arm_2_finger" link2="right_2_1_finger" reason="Never" />
+    <disable_collisions link1="arm_2_finger" link2="right_2_finger" reason="Never" />
+    <disable_collisions link1="arm_2_finger" link2="right_3_1_finger" reason="Never" />
+    <disable_collisions link1="arm_2_finger" link2="right_3_finger" reason="Never" />
+    <disable_collisions link1="arm_2_finger" link2="wrist" reason="Never" />
+    <disable_collisions link1="arm_2_finger" link2="wrist2" reason="Never" />
+    <disable_collisions link1="arm_2_finger" link2="wrist3" reason="Never" />
+    <disable_collisions link1="arm_3_1_finger" link2="arm_3_finger" reason="Adjacent" />
+    <disable_collisions link1="arm_3_1_finger" link2="arm_toolplate" reason="Never" />
+    <disable_collisions link1="arm_3_1_finger" link2="grapple" reason="Never" />
+    <disable_collisions link1="arm_3_1_finger" link2="grapple2" reason="Never" />
+    <disable_collisions link1="arm_3_1_finger" link2="gripper_base" reason="Never" />
+    <disable_collisions link1="arm_3_1_finger" link2="left_1_1_finger" reason="Never" />
+    <disable_collisions link1="arm_3_1_finger" link2="left_1_finger" reason="Never" />
+    <disable_collisions link1="arm_3_1_finger" link2="left_2_finger" reason="Never" />
+    <disable_collisions link1="arm_3_1_finger" link2="left_3_1_finger" reason="Never" />
+    <disable_collisions link1="arm_3_1_finger" link2="right_1_finger" reason="Never" />
+    <disable_collisions link1="arm_3_1_finger" link2="right_2_1_finger" reason="Never" />
+    <disable_collisions link1="arm_3_1_finger" link2="right_2_finger" reason="Never" />
+    <disable_collisions link1="arm_3_1_finger" link2="right_3_1_finger" reason="Never" />
+    <disable_collisions link1="arm_3_1_finger" link2="right_3_finger" reason="Never" />
+    <disable_collisions link1="arm_3_1_finger" link2="wrist" reason="Never" />
+    <disable_collisions link1="arm_3_1_finger" link2="wrist2" reason="Never" />
+    <disable_collisions link1="arm_3_1_finger" link2="wrist3" reason="Never" />
+    <disable_collisions link1="arm_3_finger" link2="arm_toolplate" reason="Adjacent" />
+    <disable_collisions link1="arm_3_finger" link2="grapple" reason="Never" />
+    <disable_collisions link1="arm_3_finger" link2="grapple2" reason="Never" />
+    <disable_collisions link1="arm_3_finger" link2="gripper_base" reason="Never" />
+    <disable_collisions link1="arm_3_finger" link2="left_1_1_finger" reason="Never" />
+    <disable_collisions link1="arm_3_finger" link2="left_2_1_finger" reason="Never" />
+    <disable_collisions link1="arm_3_finger" link2="left_2_finger" reason="Never" />
+    <disable_collisions link1="arm_3_finger" link2="left_3_finger" reason="Never" />
+    <disable_collisions link1="arm_3_finger" link2="right_1_finger" reason="Never" />
+    <disable_collisions link1="arm_3_finger" link2="right_2_1_finger" reason="Never" />
+    <disable_collisions link1="arm_3_finger" link2="right_2_finger" reason="Never" />
+    <disable_collisions link1="arm_3_finger" link2="right_3_1_finger" reason="Never" />
+    <disable_collisions link1="arm_3_finger" link2="right_3_finger" reason="Never" />
+    <disable_collisions link1="arm_3_finger" link2="wrist" reason="Never" />
+    <disable_collisions link1="arm_3_finger" link2="wrist2" reason="Never" />
+    <disable_collisions link1="arm_3_finger" link2="wrist3" reason="Never" />
+    <disable_collisions link1="arm_toolplate" link2="grapple" reason="Never" />
+    <disable_collisions link1="arm_toolplate" link2="grapple2" reason="Never" />
+    <disable_collisions link1="arm_toolplate" link2="gripper_base" reason="Adjacent" />
+    <disable_collisions link1="arm_toolplate" link2="right_2_1_finger" reason="Never" />
+    <disable_collisions link1="arm_toolplate" link2="right_2_finger" reason="Never" />
+    <disable_collisions link1="arm_toolplate" link2="right_3_1_finger" reason="Never" />
+    <disable_collisions link1="arm_toolplate" link2="right_3_finger" reason="Never" />
+    <disable_collisions link1="arm_toolplate" link2="wrist" reason="Never" />
+    <disable_collisions link1="arm_toolplate" link2="wrist2" reason="Never" />
+    <disable_collisions link1="arm_toolplate" link2="wrist3" reason="Never" />
+    <disable_collisions link1="base" link2="base_link" reason="Never" />
+    <disable_collisions link1="base" link2="boom1" reason="Never" />
+    <disable_collisions link1="base" link2="boom10" reason="Never" />
+    <disable_collisions link1="base" link2="boom2" reason="Never" />
+    <disable_collisions link1="base" link2="boom3" reason="Never" />
+    <disable_collisions link1="base" link2="boom4" reason="Never" />
+    <disable_collisions link1="base" link2="boom5" reason="Never" />
+    <disable_collisions link1="base" link2="boom6" reason="Never" />
+    <disable_collisions link1="base" link2="boom7" reason="Never" />
+    <disable_collisions link1="base" link2="boom8" reason="Never" />
+    <disable_collisions link1="base" link2="boom9" reason="Never" />
+    <disable_collisions link1="base" link2="camera" reason="Never" />
+    <disable_collisions link1="base" link2="connectlink" reason="Adjacent" />
+    <disable_collisions link1="base" link2="elbow" reason="Never" />
+    <disable_collisions link1="base" link2="grapple" reason="Never" />
+    <disable_collisions link1="base" link2="grapple2" reason="Never" />
+    <disable_collisions link1="base" link2="left_1_1_finger" reason="Never" />
+    <disable_collisions link1="base" link2="left_1_finger" reason="Never" />
+    <disable_collisions link1="base" link2="left_2_1_finger" reason="Never" />
+    <disable_collisions link1="base" link2="left_2_finger" reason="Never" />
+    <disable_collisions link1="base" link2="left_3_1_finger" reason="Never" />
+    <disable_collisions link1="base" link2="left_3_finger" reason="Never" />
+    <disable_collisions link1="base" link2="left_toolplate" reason="Never" />
+    <disable_collisions link1="base" link2="link1" reason="Adjacent" />
+    <disable_collisions link1="base" link2="link2" reason="Never" />
+    <disable_collisions link1="base" link2="link3" reason="Never" />
+    <disable_collisions link1="base" link2="right_1_1_finger" reason="Never" />
+    <disable_collisions link1="base" link2="right_1_finger" reason="Never" />
+    <disable_collisions link1="base" link2="right_2_1_finger" reason="Never" />
+    <disable_collisions link1="base" link2="right_2_finger" reason="Never" />
+    <disable_collisions link1="base" link2="right_3_1_finger" reason="Never" />
+    <disable_collisions link1="base" link2="right_3_finger" reason="Never" />
+    <disable_collisions link1="base" link2="right_toolplate" reason="Never" />
+    <disable_collisions link1="base" link2="shoulder" reason="Never" />
+    <disable_collisions link1="base" link2="wrist" reason="Never" />
+    <disable_collisions link1="base" link2="wrist2" reason="Never" />
+    <disable_collisions link1="base_link" link2="boom1" reason="Adjacent" />
+    <disable_collisions link1="base_link" link2="boom10" reason="Never" />
+    <disable_collisions link1="base_link" link2="boom2" reason="Never" />
+    <disable_collisions link1="base_link" link2="boom3" reason="Never" />
+    <disable_collisions link1="base_link" link2="boom4" reason="Never" />
+    <disable_collisions link1="base_link" link2="boom5" reason="Never" />
+    <disable_collisions link1="base_link" link2="boom6" reason="Never" />
+    <disable_collisions link1="base_link" link2="boom7" reason="Never" />
+    <disable_collisions link1="base_link" link2="boom8" reason="Never" />
+    <disable_collisions link1="base_link" link2="boom9" reason="Never" />
+    <disable_collisions link1="base_link" link2="camera" reason="Never" />
+    <disable_collisions link1="base_link" link2="connectlink" reason="Never" />
+    <disable_collisions link1="base_link" link2="elbow" reason="Never" />
+    <disable_collisions link1="base_link" link2="grapple" reason="Adjacent" />
+    <disable_collisions link1="base_link" link2="grapple2" reason="Default" />
+    <disable_collisions link1="base_link" link2="left_1_1_finger" reason="Never" />
+    <disable_collisions link1="base_link" link2="left_1_finger" reason="Never" />
+    <disable_collisions link1="base_link" link2="left_2_1_finger" reason="Never" />
+    <disable_collisions link1="base_link" link2="left_2_finger" reason="Never" />
+    <disable_collisions link1="base_link" link2="left_3_1_finger" reason="Never" />
+    <disable_collisions link1="base_link" link2="left_3_finger" reason="Never" />
+    <disable_collisions link1="base_link" link2="left_toolplate" reason="Adjacent" />
+    <disable_collisions link1="base_link" link2="link1" reason="Adjacent" />
+    <disable_collisions link1="base_link" link2="link2" reason="Never" />
+    <disable_collisions link1="base_link" link2="link3" reason="Never" />
+    <disable_collisions link1="base_link" link2="right_1_1_finger" reason="Never" />
+    <disable_collisions link1="base_link" link2="right_1_finger" reason="Never" />
+    <disable_collisions link1="base_link" link2="right_2_1_finger" reason="Never" />
+    <disable_collisions link1="base_link" link2="right_2_finger" reason="Never" />
+    <disable_collisions link1="base_link" link2="right_3_1_finger" reason="Never" />
+    <disable_collisions link1="base_link" link2="right_3_finger" reason="Never" />
+    <disable_collisions link1="base_link" link2="right_toolplate" reason="Adjacent" />
+    <disable_collisions link1="base_link" link2="shoulder" reason="Never" />
+    <disable_collisions link1="base_link" link2="wrist" reason="Never" />
+    <disable_collisions link1="boom1" link2="boom10" reason="Never" />
+    <disable_collisions link1="boom1" link2="boom2" reason="Adjacent" />
+    <disable_collisions link1="boom1" link2="boom3" reason="Never" />
+    <disable_collisions link1="boom1" link2="boom4" reason="Never" />
+    <disable_collisions link1="boom1" link2="boom5" reason="Never" />
+    <disable_collisions link1="boom1" link2="boom6" reason="Never" />
+    <disable_collisions link1="boom1" link2="boom7" reason="Never" />
+    <disable_collisions link1="boom1" link2="boom8" reason="Never" />
+    <disable_collisions link1="boom1" link2="boom9" reason="Never" />
+    <disable_collisions link1="boom1" link2="camera" reason="Never" />
+    <disable_collisions link1="boom1" link2="connectlink" reason="Never" />
+    <disable_collisions link1="boom1" link2="grapple" reason="Never" />
+    <disable_collisions link1="boom1" link2="grapple2" reason="Never" />
+    <disable_collisions link1="boom1" link2="left_1_1_finger" reason="Never" />
+    <disable_collisions link1="boom1" link2="left_1_finger" reason="Never" />
+    <disable_collisions link1="boom1" link2="left_2_1_finger" reason="Never" />
+    <disable_collisions link1="boom1" link2="left_2_finger" reason="Never" />
+    <disable_collisions link1="boom1" link2="left_3_1_finger" reason="Never" />
+    <disable_collisions link1="boom1" link2="left_3_finger" reason="Never" />
+    <disable_collisions link1="boom1" link2="left_toolplate" reason="Never" />
+    <disable_collisions link1="boom1" link2="link1" reason="Never" />
+    <disable_collisions link1="boom1" link2="right_1_1_finger" reason="Never" />
+    <disable_collisions link1="boom1" link2="right_1_finger" reason="Never" />
+    <disable_collisions link1="boom1" link2="right_2_1_finger" reason="Never" />
+    <disable_collisions link1="boom1" link2="right_2_finger" reason="Never" />
+    <disable_collisions link1="boom1" link2="right_3_1_finger" reason="Never" />
+    <disable_collisions link1="boom1" link2="right_3_finger" reason="Never" />
+    <disable_collisions link1="boom1" link2="right_toolplate" reason="Never" />
+    <disable_collisions link1="boom1" link2="shoulder" reason="Never" />
+    <disable_collisions link1="boom10" link2="boom2" reason="Default" />
+    <disable_collisions link1="boom10" link2="boom3" reason="Default" />
+    <disable_collisions link1="boom10" link2="boom4" reason="Default" />
+    <disable_collisions link1="boom10" link2="boom5" reason="Default" />
+    <disable_collisions link1="boom10" link2="boom6" reason="Default" />
+    <disable_collisions link1="boom10" link2="boom7" reason="Default" />
+    <disable_collisions link1="boom10" link2="boom8" reason="Default" />
+    <disable_collisions link1="boom10" link2="boom9" reason="Adjacent" />
+    <disable_collisions link1="boom10" link2="camera" reason="Adjacent" />
+    <disable_collisions link1="boom10" link2="connectlink" reason="Never" />
+    <disable_collisions link1="boom10" link2="grapple" reason="Never" />
+    <disable_collisions link1="boom10" link2="grapple2" reason="Never" />
+    <disable_collisions link1="boom10" link2="left_1_1_finger" reason="Never" />
+    <disable_collisions link1="boom10" link2="left_1_finger" reason="Never" />
+    <disable_collisions link1="boom10" link2="left_2_1_finger" reason="Never" />
+    <disable_collisions link1="boom10" link2="left_2_finger" reason="Never" />
+    <disable_collisions link1="boom10" link2="left_3_1_finger" reason="Never" />
+    <disable_collisions link1="boom10" link2="left_3_finger" reason="Never" />
+    <disable_collisions link1="boom10" link2="left_toolplate" reason="Never" />
+    <disable_collisions link1="boom10" link2="link1" reason="Never" />
+    <disable_collisions link1="boom10" link2="right_1_1_finger" reason="Never" />
+    <disable_collisions link1="boom10" link2="right_1_finger" reason="Never" />
+    <disable_collisions link1="boom10" link2="right_2_1_finger" reason="Never" />
+    <disable_collisions link1="boom10" link2="right_2_finger" reason="Never" />
+    <disable_collisions link1="boom10" link2="right_3_1_finger" reason="Never" />
+    <disable_collisions link1="boom10" link2="right_3_finger" reason="Never" />
+    <disable_collisions link1="boom10" link2="right_toolplate" reason="Never" />
+    <disable_collisions link1="boom10" link2="shoulder" reason="Never" />
+    <disable_collisions link1="boom2" link2="boom3" reason="Adjacent" />
+    <disable_collisions link1="boom2" link2="boom4" reason="Default" />
+    <disable_collisions link1="boom2" link2="boom5" reason="Default" />
+    <disable_collisions link1="boom2" link2="boom6" reason="Default" />
+    <disable_collisions link1="boom2" link2="boom7" reason="Default" />
+    <disable_collisions link1="boom2" link2="boom8" reason="Default" />
+    <disable_collisions link1="boom2" link2="boom9" reason="Default" />
+    <disable_collisions link1="boom2" link2="camera" reason="Never" />
+    <disable_collisions link1="boom2" link2="connectlink" reason="Never" />
+    <disable_collisions link1="boom2" link2="grapple" reason="Never" />
+    <disable_collisions link1="boom2" link2="grapple2" reason="Never" />
+    <disable_collisions link1="boom2" link2="left_1_1_finger" reason="Never" />
+    <disable_collisions link1="boom2" link2="left_1_finger" reason="Never" />
+    <disable_collisions link1="boom2" link2="left_2_1_finger" reason="Never" />
+    <disable_collisions link1="boom2" link2="left_2_finger" reason="Never" />
+    <disable_collisions link1="boom2" link2="left_3_1_finger" reason="Never" />
+    <disable_collisions link1="boom2" link2="left_3_finger" reason="Never" />
+    <disable_collisions link1="boom2" link2="left_toolplate" reason="Never" />
+    <disable_collisions link1="boom2" link2="link1" reason="Never" />
+    <disable_collisions link1="boom2" link2="right_1_1_finger" reason="Never" />
+    <disable_collisions link1="boom2" link2="right_1_finger" reason="Never" />
+    <disable_collisions link1="boom2" link2="right_2_1_finger" reason="Never" />
+    <disable_collisions link1="boom2" link2="right_2_finger" reason="Never" />
+    <disable_collisions link1="boom2" link2="right_3_1_finger" reason="Never" />
+    <disable_collisions link1="boom2" link2="right_3_finger" reason="Never" />
+    <disable_collisions link1="boom2" link2="right_toolplate" reason="Never" />
+    <disable_collisions link1="boom2" link2="shoulder" reason="Never" />
+    <disable_collisions link1="boom3" link2="boom4" reason="Adjacent" />
+    <disable_collisions link1="boom3" link2="boom5" reason="Default" />
+    <disable_collisions link1="boom3" link2="boom6" reason="Default" />
+    <disable_collisions link1="boom3" link2="boom7" reason="Default" />
+    <disable_collisions link1="boom3" link2="boom8" reason="Default" />
+    <disable_collisions link1="boom3" link2="boom9" reason="Default" />
+    <disable_collisions link1="boom3" link2="camera" reason="Never" />
+    <disable_collisions link1="boom3" link2="connectlink" reason="Never" />
+    <disable_collisions link1="boom3" link2="grapple" reason="Never" />
+    <disable_collisions link1="boom3" link2="grapple2" reason="Never" />
+    <disable_collisions link1="boom3" link2="left_1_1_finger" reason="Never" />
+    <disable_collisions link1="boom3" link2="left_1_finger" reason="Never" />
+    <disable_collisions link1="boom3" link2="left_2_1_finger" reason="Never" />
+    <disable_collisions link1="boom3" link2="left_2_finger" reason="Never" />
+    <disable_collisions link1="boom3" link2="left_3_1_finger" reason="Never" />
+    <disable_collisions link1="boom3" link2="left_3_finger" reason="Never" />
+    <disable_collisions link1="boom3" link2="left_toolplate" reason="Never" />
+    <disable_collisions link1="boom3" link2="link1" reason="Never" />
+    <disable_collisions link1="boom3" link2="right_1_1_finger" reason="Never" />
+    <disable_collisions link1="boom3" link2="right_1_finger" reason="Never" />
+    <disable_collisions link1="boom3" link2="right_2_1_finger" reason="Never" />
+    <disable_collisions link1="boom3" link2="right_2_finger" reason="Never" />
+    <disable_collisions link1="boom3" link2="right_3_1_finger" reason="Never" />
+    <disable_collisions link1="boom3" link2="right_3_finger" reason="Never" />
+    <disable_collisions link1="boom3" link2="right_toolplate" reason="Never" />
+    <disable_collisions link1="boom3" link2="shoulder" reason="Never" />
+    <disable_collisions link1="boom4" link2="boom5" reason="Adjacent" />
+    <disable_collisions link1="boom4" link2="boom6" reason="Default" />
+    <disable_collisions link1="boom4" link2="boom7" reason="Default" />
+    <disable_collisions link1="boom4" link2="boom8" reason="Default" />
+    <disable_collisions link1="boom4" link2="boom9" reason="Default" />
+    <disable_collisions link1="boom4" link2="camera" reason="Never" />
+    <disable_collisions link1="boom4" link2="connectlink" reason="Never" />
+    <disable_collisions link1="boom4" link2="grapple" reason="Never" />
+    <disable_collisions link1="boom4" link2="grapple2" reason="Never" />
+    <disable_collisions link1="boom4" link2="left_1_1_finger" reason="Never" />
+    <disable_collisions link1="boom4" link2="left_1_finger" reason="Never" />
+    <disable_collisions link1="boom4" link2="left_2_1_finger" reason="Never" />
+    <disable_collisions link1="boom4" link2="left_2_finger" reason="Never" />
+    <disable_collisions link1="boom4" link2="left_3_1_finger" reason="Never" />
+    <disable_collisions link1="boom4" link2="left_3_finger" reason="Never" />
+    <disable_collisions link1="boom4" link2="left_toolplate" reason="Never" />
+    <disable_collisions link1="boom4" link2="link1" reason="Never" />
+    <disable_collisions link1="boom4" link2="right_1_1_finger" reason="Never" />
+    <disable_collisions link1="boom4" link2="right_1_finger" reason="Never" />
+    <disable_collisions link1="boom4" link2="right_2_1_finger" reason="Never" />
+    <disable_collisions link1="boom4" link2="right_2_finger" reason="Never" />
+    <disable_collisions link1="boom4" link2="right_3_1_finger" reason="Never" />
+    <disable_collisions link1="boom4" link2="right_3_finger" reason="Never" />
+    <disable_collisions link1="boom4" link2="right_toolplate" reason="Never" />
+    <disable_collisions link1="boom4" link2="shoulder" reason="Never" />
+    <disable_collisions link1="boom5" link2="boom6" reason="Adjacent" />
+    <disable_collisions link1="boom5" link2="boom7" reason="Default" />
+    <disable_collisions link1="boom5" link2="boom8" reason="Default" />
+    <disable_collisions link1="boom5" link2="boom9" reason="Default" />
+    <disable_collisions link1="boom5" link2="camera" reason="Never" />
+    <disable_collisions link1="boom5" link2="connectlink" reason="Never" />
+    <disable_collisions link1="boom5" link2="grapple" reason="Never" />
+    <disable_collisions link1="boom5" link2="grapple2" reason="Never" />
+    <disable_collisions link1="boom5" link2="left_1_1_finger" reason="Never" />
+    <disable_collisions link1="boom5" link2="left_1_finger" reason="Never" />
+    <disable_collisions link1="boom5" link2="left_2_1_finger" reason="Never" />
+    <disable_collisions link1="boom5" link2="left_2_finger" reason="Never" />
+    <disable_collisions link1="boom5" link2="left_3_1_finger" reason="Never" />
+    <disable_collisions link1="boom5" link2="left_3_finger" reason="Never" />
+    <disable_collisions link1="boom5" link2="left_toolplate" reason="Never" />
+    <disable_collisions link1="boom5" link2="link1" reason="Never" />
+    <disable_collisions link1="boom5" link2="right_1_1_finger" reason="Never" />
+    <disable_collisions link1="boom5" link2="right_1_finger" reason="Never" />
+    <disable_collisions link1="boom5" link2="right_2_1_finger" reason="Never" />
+    <disable_collisions link1="boom5" link2="right_2_finger" reason="Never" />
+    <disable_collisions link1="boom5" link2="right_3_1_finger" reason="Never" />
+    <disable_collisions link1="boom5" link2="right_3_finger" reason="Never" />
+    <disable_collisions link1="boom5" link2="right_toolplate" reason="Never" />
+    <disable_collisions link1="boom5" link2="shoulder" reason="Never" />
+    <disable_collisions link1="boom6" link2="boom7" reason="Adjacent" />
+    <disable_collisions link1="boom6" link2="boom8" reason="Default" />
+    <disable_collisions link1="boom6" link2="boom9" reason="Default" />
+    <disable_collisions link1="boom6" link2="camera" reason="Never" />
+    <disable_collisions link1="boom6" link2="connectlink" reason="Never" />
+    <disable_collisions link1="boom6" link2="grapple" reason="Never" />
+    <disable_collisions link1="boom6" link2="grapple2" reason="Never" />
+    <disable_collisions link1="boom6" link2="left_1_1_finger" reason="Never" />
+    <disable_collisions link1="boom6" link2="left_1_finger" reason="Never" />
+    <disable_collisions link1="boom6" link2="left_2_1_finger" reason="Never" />
+    <disable_collisions link1="boom6" link2="left_2_finger" reason="Never" />
+    <disable_collisions link1="boom6" link2="left_3_1_finger" reason="Never" />
+    <disable_collisions link1="boom6" link2="left_3_finger" reason="Never" />
+    <disable_collisions link1="boom6" link2="left_toolplate" reason="Never" />
+    <disable_collisions link1="boom6" link2="link1" reason="Never" />
+    <disable_collisions link1="boom6" link2="right_1_1_finger" reason="Never" />
+    <disable_collisions link1="boom6" link2="right_1_finger" reason="Never" />
+    <disable_collisions link1="boom6" link2="right_2_1_finger" reason="Never" />
+    <disable_collisions link1="boom6" link2="right_2_finger" reason="Never" />
+    <disable_collisions link1="boom6" link2="right_3_1_finger" reason="Never" />
+    <disable_collisions link1="boom6" link2="right_3_finger" reason="Never" />
+    <disable_collisions link1="boom6" link2="right_toolplate" reason="Never" />
+    <disable_collisions link1="boom6" link2="shoulder" reason="Never" />
+    <disable_collisions link1="boom7" link2="boom8" reason="Adjacent" />
+    <disable_collisions link1="boom7" link2="boom9" reason="Default" />
+    <disable_collisions link1="boom7" link2="camera" reason="Never" />
+    <disable_collisions link1="boom7" link2="connectlink" reason="Never" />
+    <disable_collisions link1="boom7" link2="grapple" reason="Never" />
+    <disable_collisions link1="boom7" link2="grapple2" reason="Never" />
+    <disable_collisions link1="boom7" link2="left_1_1_finger" reason="Never" />
+    <disable_collisions link1="boom7" link2="left_1_finger" reason="Never" />
+    <disable_collisions link1="boom7" link2="left_2_1_finger" reason="Never" />
+    <disable_collisions link1="boom7" link2="left_2_finger" reason="Never" />
+    <disable_collisions link1="boom7" link2="left_3_1_finger" reason="Never" />
+    <disable_collisions link1="boom7" link2="left_3_finger" reason="Never" />
+    <disable_collisions link1="boom7" link2="left_toolplate" reason="Never" />
+    <disable_collisions link1="boom7" link2="link1" reason="Never" />
+    <disable_collisions link1="boom7" link2="right_1_1_finger" reason="Never" />
+    <disable_collisions link1="boom7" link2="right_1_finger" reason="Never" />
+    <disable_collisions link1="boom7" link2="right_2_1_finger" reason="Never" />
+    <disable_collisions link1="boom7" link2="right_2_finger" reason="Never" />
+    <disable_collisions link1="boom7" link2="right_3_1_finger" reason="Never" />
+    <disable_collisions link1="boom7" link2="right_3_finger" reason="Never" />
+    <disable_collisions link1="boom7" link2="right_toolplate" reason="Never" />
+    <disable_collisions link1="boom7" link2="shoulder" reason="Never" />
+    <disable_collisions link1="boom8" link2="boom9" reason="Adjacent" />
+    <disable_collisions link1="boom8" link2="camera" reason="Never" />
+    <disable_collisions link1="boom8" link2="connectlink" reason="Never" />
+    <disable_collisions link1="boom8" link2="grapple" reason="Never" />
+    <disable_collisions link1="boom8" link2="grapple2" reason="Never" />
+    <disable_collisions link1="boom8" link2="left_1_1_finger" reason="Never" />
+    <disable_collisions link1="boom8" link2="left_1_finger" reason="Never" />
+    <disable_collisions link1="boom8" link2="left_2_1_finger" reason="Never" />
+    <disable_collisions link1="boom8" link2="left_2_finger" reason="Never" />
+    <disable_collisions link1="boom8" link2="left_3_1_finger" reason="Never" />
+    <disable_collisions link1="boom8" link2="left_3_finger" reason="Never" />
+    <disable_collisions link1="boom8" link2="left_toolplate" reason="Never" />
+    <disable_collisions link1="boom8" link2="link1" reason="Never" />
+    <disable_collisions link1="boom8" link2="right_1_1_finger" reason="Never" />
+    <disable_collisions link1="boom8" link2="right_1_finger" reason="Never" />
+    <disable_collisions link1="boom8" link2="right_2_1_finger" reason="Never" />
+    <disable_collisions link1="boom8" link2="right_2_finger" reason="Never" />
+    <disable_collisions link1="boom8" link2="right_3_1_finger" reason="Never" />
+    <disable_collisions link1="boom8" link2="right_3_finger" reason="Never" />
+    <disable_collisions link1="boom8" link2="right_toolplate" reason="Never" />
+    <disable_collisions link1="boom8" link2="shoulder" reason="Never" />
+    <disable_collisions link1="boom9" link2="camera" reason="Never" />
+    <disable_collisions link1="boom9" link2="connectlink" reason="Never" />
+    <disable_collisions link1="boom9" link2="grapple" reason="Never" />
+    <disable_collisions link1="boom9" link2="grapple2" reason="Never" />
+    <disable_collisions link1="boom9" link2="left_1_1_finger" reason="Never" />
+    <disable_collisions link1="boom9" link2="left_1_finger" reason="Never" />
+    <disable_collisions link1="boom9" link2="left_2_1_finger" reason="Never" />
+    <disable_collisions link1="boom9" link2="left_2_finger" reason="Never" />
+    <disable_collisions link1="boom9" link2="left_3_1_finger" reason="Never" />
+    <disable_collisions link1="boom9" link2="left_3_finger" reason="Never" />
+    <disable_collisions link1="boom9" link2="left_toolplate" reason="Never" />
+    <disable_collisions link1="boom9" link2="link1" reason="Never" />
+    <disable_collisions link1="boom9" link2="right_1_1_finger" reason="Never" />
+    <disable_collisions link1="boom9" link2="right_1_finger" reason="Never" />
+    <disable_collisions link1="boom9" link2="right_2_1_finger" reason="Never" />
+    <disable_collisions link1="boom9" link2="right_2_finger" reason="Never" />
+    <disable_collisions link1="boom9" link2="right_3_1_finger" reason="Never" />
+    <disable_collisions link1="boom9" link2="right_3_finger" reason="Never" />
+    <disable_collisions link1="boom9" link2="right_toolplate" reason="Never" />
+    <disable_collisions link1="boom9" link2="shoulder" reason="Never" />
+    <disable_collisions link1="camera" link2="connectlink" reason="Never" />
+    <disable_collisions link1="camera" link2="grapple" reason="Never" />
+    <disable_collisions link1="camera" link2="grapple2" reason="Never" />
+    <disable_collisions link1="camera" link2="left_1_1_finger" reason="Never" />
+    <disable_collisions link1="camera" link2="left_1_finger" reason="Never" />
+    <disable_collisions link1="camera" link2="left_2_1_finger" reason="Never" />
+    <disable_collisions link1="camera" link2="left_2_finger" reason="Never" />
+    <disable_collisions link1="camera" link2="left_3_1_finger" reason="Never" />
+    <disable_collisions link1="camera" link2="left_3_finger" reason="Never" />
+    <disable_collisions link1="camera" link2="left_toolplate" reason="Never" />
+    <disable_collisions link1="camera" link2="link1" reason="Never" />
+    <disable_collisions link1="camera" link2="link2" reason="Never" />
+    <disable_collisions link1="camera" link2="right_1_1_finger" reason="Never" />
+    <disable_collisions link1="camera" link2="right_1_finger" reason="Never" />
+    <disable_collisions link1="camera" link2="right_2_1_finger" reason="Never" />
+    <disable_collisions link1="camera" link2="right_2_finger" reason="Never" />
+    <disable_collisions link1="camera" link2="right_3_1_finger" reason="Never" />
+    <disable_collisions link1="camera" link2="right_3_finger" reason="Never" />
+    <disable_collisions link1="camera" link2="right_toolplate" reason="Never" />
+    <disable_collisions link1="camera" link2="shoulder" reason="Never" />
+    <disable_collisions link1="connectlink" link2="elbow" reason="Never" />
+    <disable_collisions link1="connectlink" link2="grapple" reason="Never" />
+    <disable_collisions link1="connectlink" link2="grapple2" reason="Never" />
+    <disable_collisions link1="connectlink" link2="left_1_1_finger" reason="Never" />
+    <disable_collisions link1="connectlink" link2="left_1_finger" reason="Never" />
+    <disable_collisions link1="connectlink" link2="left_2_1_finger" reason="Never" />
+    <disable_collisions link1="connectlink" link2="left_2_finger" reason="Never" />
+    <disable_collisions link1="connectlink" link2="left_3_1_finger" reason="Never" />
+    <disable_collisions link1="connectlink" link2="left_3_finger" reason="Never" />
+    <disable_collisions link1="connectlink" link2="left_toolplate" reason="Never" />
+    <disable_collisions link1="connectlink" link2="link1" reason="Never" />
+    <disable_collisions link1="connectlink" link2="link2" reason="Never" />
+    <disable_collisions link1="connectlink" link2="link3" reason="Never" />
+    <disable_collisions link1="connectlink" link2="right_1_1_finger" reason="Never" />
+    <disable_collisions link1="connectlink" link2="right_1_finger" reason="Never" />
+    <disable_collisions link1="connectlink" link2="right_2_1_finger" reason="Never" />
+    <disable_collisions link1="connectlink" link2="right_2_finger" reason="Never" />
+    <disable_collisions link1="connectlink" link2="right_3_1_finger" reason="Never" />
+    <disable_collisions link1="connectlink" link2="right_3_finger" reason="Never" />
+    <disable_collisions link1="connectlink" link2="right_toolplate" reason="Never" />
+    <disable_collisions link1="connectlink" link2="shoulder" reason="Adjacent" />
+    <disable_collisions link1="connectlink" link2="wrist" reason="Never" />
+    <disable_collisions link1="connectlink" link2="wrist2" reason="Never" />
+    <disable_collisions link1="connectlink" link2="wrist3" reason="Never" />
+    <disable_collisions link1="elbow" link2="grapple" reason="Never" />
+    <disable_collisions link1="elbow" link2="grapple2" reason="Never" />
+    <disable_collisions link1="elbow" link2="link1" reason="Never" />
+    <disable_collisions link1="elbow" link2="link2" reason="Adjacent" />
+    <disable_collisions link1="elbow" link2="link3" reason="Adjacent" />
+    <disable_collisions link1="elbow" link2="right_3_finger" reason="Never" />
+    <disable_collisions link1="elbow" link2="shoulder" reason="Never" />
+    <disable_collisions link1="elbow" link2="wrist" reason="Never" />
+    <disable_collisions link1="elbow" link2="wrist2" reason="Never" />
+    <disable_collisions link1="elbow" link2="wrist3" reason="Never" />
+    <disable_collisions link1="grapple" link2="grapple2" reason="Adjacent" />
+    <disable_collisions link1="grapple" link2="gripper_base" reason="Never" />
+    <disable_collisions link1="grapple" link2="left_1_1_finger" reason="Never" />
+    <disable_collisions link1="grapple" link2="left_1_finger" reason="Never" />
+    <disable_collisions link1="grapple" link2="left_2_1_finger" reason="Never" />
+    <disable_collisions link1="grapple" link2="left_2_finger" reason="Never" />
+    <disable_collisions link1="grapple" link2="left_3_1_finger" reason="Never" />
+    <disable_collisions link1="grapple" link2="left_3_finger" reason="Never" />
+    <disable_collisions link1="grapple" link2="left_toolplate" reason="Never" />
+    <disable_collisions link1="grapple" link2="link1" reason="Never" />
+    <disable_collisions link1="grapple" link2="link2" reason="Never" />
+    <disable_collisions link1="grapple" link2="link3" reason="Never" />
+    <disable_collisions link1="grapple" link2="right_1_1_finger" reason="Never" />
+    <disable_collisions link1="grapple" link2="right_1_finger" reason="Never" />
+    <disable_collisions link1="grapple" link2="right_2_1_finger" reason="Never" />
+    <disable_collisions link1="grapple" link2="right_2_finger" reason="Never" />
+    <disable_collisions link1="grapple" link2="right_3_1_finger" reason="Never" />
+    <disable_collisions link1="grapple" link2="right_3_finger" reason="Never" />
+    <disable_collisions link1="grapple" link2="right_toolplate" reason="Never" />
+    <disable_collisions link1="grapple" link2="shoulder" reason="Never" />
+    <disable_collisions link1="grapple" link2="wrist" reason="Never" />
+    <disable_collisions link1="grapple" link2="wrist2" reason="Never" />
+    <disable_collisions link1="grapple" link2="wrist3" reason="Never" />
+    <disable_collisions link1="grapple2" link2="gripper_base" reason="Never" />
+    <disable_collisions link1="grapple2" link2="left_1_1_finger" reason="Never" />
+    <disable_collisions link1="grapple2" link2="left_1_finger" reason="Never" />
+    <disable_collisions link1="grapple2" link2="left_2_1_finger" reason="Never" />
+    <disable_collisions link1="grapple2" link2="left_2_finger" reason="Never" />
+    <disable_collisions link1="grapple2" link2="left_3_1_finger" reason="Never" />
+    <disable_collisions link1="grapple2" link2="left_3_finger" reason="Never" />
+    <disable_collisions link1="grapple2" link2="left_toolplate" reason="Never" />
+    <disable_collisions link1="grapple2" link2="link1" reason="Never" />
+    <disable_collisions link1="grapple2" link2="link2" reason="Never" />
+    <disable_collisions link1="grapple2" link2="link3" reason="Never" />
+    <disable_collisions link1="grapple2" link2="right_1_1_finger" reason="Never" />
+    <disable_collisions link1="grapple2" link2="right_1_finger" reason="Never" />
+    <disable_collisions link1="grapple2" link2="right_2_1_finger" reason="Never" />
+    <disable_collisions link1="grapple2" link2="right_2_finger" reason="Never" />
+    <disable_collisions link1="grapple2" link2="right_3_1_finger" reason="Never" />
+    <disable_collisions link1="grapple2" link2="right_3_finger" reason="Never" />
+    <disable_collisions link1="grapple2" link2="right_toolplate" reason="Never" />
+    <disable_collisions link1="grapple2" link2="shoulder" reason="Never" />
+    <disable_collisions link1="grapple2" link2="wrist" reason="Never" />
+    <disable_collisions link1="grapple2" link2="wrist2" reason="Never" />
+    <disable_collisions link1="grapple2" link2="wrist3" reason="Never" />
+    <disable_collisions link1="gripper_base" link2="wrist" reason="Never" />
+    <disable_collisions link1="gripper_base" link2="wrist2" reason="Never" />
+    <disable_collisions link1="gripper_base" link2="wrist3" reason="Adjacent" />
+    <disable_collisions link1="left_1_1_finger" link2="left_1_finger" reason="Adjacent" />
+    <disable_collisions link1="left_1_1_finger" link2="left_2_1_finger" reason="Never" />
+    <disable_collisions link1="left_1_1_finger" link2="left_2_finger" reason="Never" />
+    <disable_collisions link1="left_1_1_finger" link2="left_3_1_finger" reason="Never" />
+    <disable_collisions link1="left_1_1_finger" link2="left_3_finger" reason="Never" />
+    <disable_collisions link1="left_1_1_finger" link2="left_toolplate" reason="Never" />
+    <disable_collisions link1="left_1_1_finger" link2="link1" reason="Never" />
+    <disable_collisions link1="left_1_1_finger" link2="right_1_1_finger" reason="Never" />
+    <disable_collisions link1="left_1_1_finger" link2="right_1_finger" reason="Never" />
+    <disable_collisions link1="left_1_1_finger" link2="right_2_1_finger" reason="Never" />
+    <disable_collisions link1="left_1_1_finger" link2="right_2_finger" reason="Never" />
+    <disable_collisions link1="left_1_1_finger" link2="right_3_1_finger" reason="Never" />
+    <disable_collisions link1="left_1_1_finger" link2="right_3_finger" reason="Never" />
+    <disable_collisions link1="left_1_1_finger" link2="right_toolplate" reason="Never" />
+    <disable_collisions link1="left_1_1_finger" link2="shoulder" reason="Never" />
+    <disable_collisions link1="left_1_1_finger" link2="wrist3" reason="Never" />
+    <disable_collisions link1="left_1_finger" link2="left_2_1_finger" reason="Never" />
+    <disable_collisions link1="left_1_finger" link2="left_2_finger" reason="Never" />
+    <disable_collisions link1="left_1_finger" link2="left_3_1_finger" reason="Never" />
+    <disable_collisions link1="left_1_finger" link2="left_3_finger" reason="Never" />
+    <disable_collisions link1="left_1_finger" link2="left_toolplate" reason="Adjacent" />
+    <disable_collisions link1="left_1_finger" link2="link1" reason="Never" />
+    <disable_collisions link1="left_1_finger" link2="right_1_1_finger" reason="Never" />
+    <disable_collisions link1="left_1_finger" link2="right_1_finger" reason="Never" />
+    <disable_collisions link1="left_1_finger" link2="right_2_1_finger" reason="Never" />
+    <disable_collisions link1="left_1_finger" link2="right_2_finger" reason="Never" />
+    <disable_collisions link1="left_1_finger" link2="right_3_1_finger" reason="Never" />
+    <disable_collisions link1="left_1_finger" link2="right_3_finger" reason="Never" />
+    <disable_collisions link1="left_1_finger" link2="right_toolplate" reason="Never" />
+    <disable_collisions link1="left_1_finger" link2="shoulder" reason="Never" />
+    <disable_collisions link1="left_2_1_finger" link2="left_2_finger" reason="Adjacent" />
+    <disable_collisions link1="left_2_1_finger" link2="left_3_1_finger" reason="Never" />
+    <disable_collisions link1="left_2_1_finger" link2="left_3_finger" reason="Never" />
+    <disable_collisions link1="left_2_1_finger" link2="left_toolplate" reason="Never" />
+    <disable_collisions link1="left_2_1_finger" link2="link1" reason="Never" />
+    <disable_collisions link1="left_2_1_finger" link2="right_1_1_finger" reason="Never" />
+    <disable_collisions link1="left_2_1_finger" link2="right_1_finger" reason="Never" />
+    <disable_collisions link1="left_2_1_finger" link2="right_2_1_finger" reason="Never" />
+    <disable_collisions link1="left_2_1_finger" link2="right_2_finger" reason="Never" />
+    <disable_collisions link1="left_2_1_finger" link2="right_3_1_finger" reason="Never" />
+    <disable_collisions link1="left_2_1_finger" link2="right_3_finger" reason="Never" />
+    <disable_collisions link1="left_2_1_finger" link2="right_toolplate" reason="Never" />
+    <disable_collisions link1="left_2_1_finger" link2="shoulder" reason="Never" />
+    <disable_collisions link1="left_2_finger" link2="left_3_1_finger" reason="Never" />
+    <disable_collisions link1="left_2_finger" link2="left_3_finger" reason="Never" />
+    <disable_collisions link1="left_2_finger" link2="left_toolplate" reason="Adjacent" />
+    <disable_collisions link1="left_2_finger" link2="link1" reason="Never" />
+    <disable_collisions link1="left_2_finger" link2="right_1_1_finger" reason="Never" />
+    <disable_collisions link1="left_2_finger" link2="right_1_finger" reason="Never" />
+    <disable_collisions link1="left_2_finger" link2="right_2_1_finger" reason="Never" />
+    <disable_collisions link1="left_2_finger" link2="right_2_finger" reason="Never" />
+    <disable_collisions link1="left_2_finger" link2="right_3_1_finger" reason="Never" />
+    <disable_collisions link1="left_2_finger" link2="right_3_finger" reason="Never" />
+    <disable_collisions link1="left_2_finger" link2="right_toolplate" reason="Never" />
+    <disable_collisions link1="left_2_finger" link2="shoulder" reason="Never" />
+    <disable_collisions link1="left_3_1_finger" link2="left_3_finger" reason="Adjacent" />
+    <disable_collisions link1="left_3_1_finger" link2="left_toolplate" reason="Never" />
+    <disable_collisions link1="left_3_1_finger" link2="link1" reason="Never" />
+    <disable_collisions link1="left_3_1_finger" link2="right_1_1_finger" reason="Never" />
+    <disable_collisions link1="left_3_1_finger" link2="right_1_finger" reason="Never" />
+    <disable_collisions link1="left_3_1_finger" link2="right_2_1_finger" reason="Never" />
+    <disable_collisions link1="left_3_1_finger" link2="right_2_finger" reason="Never" />
+    <disable_collisions link1="left_3_1_finger" link2="right_3_1_finger" reason="Never" />
+    <disable_collisions link1="left_3_1_finger" link2="right_3_finger" reason="Never" />
+    <disable_collisions link1="left_3_1_finger" link2="right_toolplate" reason="Never" />
+    <disable_collisions link1="left_3_1_finger" link2="shoulder" reason="Never" />
+    <disable_collisions link1="left_3_finger" link2="left_toolplate" reason="Adjacent" />
+    <disable_collisions link1="left_3_finger" link2="link1" reason="Never" />
+    <disable_collisions link1="left_3_finger" link2="link2" reason="Never" />
+    <disable_collisions link1="left_3_finger" link2="right_1_1_finger" reason="Never" />
+    <disable_collisions link1="left_3_finger" link2="right_1_finger" reason="Never" />
+    <disable_collisions link1="left_3_finger" link2="right_2_1_finger" reason="Never" />
+    <disable_collisions link1="left_3_finger" link2="right_2_finger" reason="Never" />
+    <disable_collisions link1="left_3_finger" link2="right_3_1_finger" reason="Never" />
+    <disable_collisions link1="left_3_finger" link2="right_3_finger" reason="Never" />
+    <disable_collisions link1="left_3_finger" link2="right_toolplate" reason="Never" />
+    <disable_collisions link1="left_3_finger" link2="shoulder" reason="Never" />
+    <disable_collisions link1="left_toolplate" link2="link1" reason="Never" />
+    <disable_collisions link1="left_toolplate" link2="link2" reason="Never" />
+    <disable_collisions link1="left_toolplate" link2="right_1_1_finger" reason="Never" />
+    <disable_collisions link1="left_toolplate" link2="right_1_finger" reason="Never" />
+    <disable_collisions link1="left_toolplate" link2="right_2_1_finger" reason="Never" />
+    <disable_collisions link1="left_toolplate" link2="right_2_finger" reason="Never" />
+    <disable_collisions link1="left_toolplate" link2="right_3_1_finger" reason="Never" />
+    <disable_collisions link1="left_toolplate" link2="right_3_finger" reason="Never" />
+    <disable_collisions link1="left_toolplate" link2="right_toolplate" reason="Never" />
+    <disable_collisions link1="left_toolplate" link2="shoulder" reason="Never" />
+    <disable_collisions link1="link1" link2="link2" reason="Never" />
+    <disable_collisions link1="link1" link2="right_1_1_finger" reason="Never" />
+    <disable_collisions link1="link1" link2="right_1_finger" reason="Never" />
+    <disable_collisions link1="link1" link2="right_2_1_finger" reason="Never" />
+    <disable_collisions link1="link1" link2="right_2_finger" reason="Never" />
+    <disable_collisions link1="link1" link2="right_3_1_finger" reason="Never" />
+    <disable_collisions link1="link1" link2="right_3_finger" reason="Never" />
+    <disable_collisions link1="link1" link2="right_toolplate" reason="Never" />
+    <disable_collisions link1="link1" link2="shoulder" reason="Never" />
+    <disable_collisions link1="link2" link2="link3" reason="Never" />
+    <disable_collisions link1="link2" link2="right_1_finger" reason="Never" />
+    <disable_collisions link1="link2" link2="right_2_1_finger" reason="Never" />
+    <disable_collisions link1="link2" link2="right_2_finger" reason="Never" />
+    <disable_collisions link1="link2" link2="right_3_1_finger" reason="Never" />
+    <disable_collisions link1="link2" link2="right_3_finger" reason="Never" />
+    <disable_collisions link1="link2" link2="right_toolplate" reason="Never" />
+    <disable_collisions link1="link2" link2="shoulder" reason="Adjacent" />
+    <disable_collisions link1="link2" link2="wrist" reason="Never" />
+    <disable_collisions link1="link2" link2="wrist2" reason="Never" />
+    <disable_collisions link1="link3" link2="shoulder" reason="Never" />
+    <disable_collisions link1="link3" link2="wrist" reason="Adjacent" />
+    <disable_collisions link1="right_1_1_finger" link2="right_1_finger" reason="Adjacent" />
+    <disable_collisions link1="right_1_1_finger" link2="right_2_1_finger" reason="Never" />
+    <disable_collisions link1="right_1_1_finger" link2="right_2_finger" reason="Never" />
+    <disable_collisions link1="right_1_1_finger" link2="right_3_1_finger" reason="Never" />
+    <disable_collisions link1="right_1_1_finger" link2="right_3_finger" reason="Never" />
+    <disable_collisions link1="right_1_1_finger" link2="right_toolplate" reason="Never" />
+    <disable_collisions link1="right_1_1_finger" link2="shoulder" reason="Never" />
+    <disable_collisions link1="right_1_finger" link2="right_2_1_finger" reason="Never" />
+    <disable_collisions link1="right_1_finger" link2="right_2_finger" reason="Never" />
+    <disable_collisions link1="right_1_finger" link2="right_3_1_finger" reason="Never" />
+    <disable_collisions link1="right_1_finger" link2="right_3_finger" reason="Never" />
+    <disable_collisions link1="right_1_finger" link2="right_toolplate" reason="Adjacent" />
+    <disable_collisions link1="right_1_finger" link2="shoulder" reason="Never" />
+    <disable_collisions link1="right_2_1_finger" link2="right_2_finger" reason="Adjacent" />
+    <disable_collisions link1="right_2_1_finger" link2="right_3_1_finger" reason="Never" />
+    <disable_collisions link1="right_2_1_finger" link2="right_3_finger" reason="Never" />
+    <disable_collisions link1="right_2_1_finger" link2="right_toolplate" reason="Never" />
+    <disable_collisions link1="right_2_1_finger" link2="shoulder" reason="Never" />
+    <disable_collisions link1="right_2_finger" link2="right_3_1_finger" reason="Never" />
+    <disable_collisions link1="right_2_finger" link2="right_3_finger" reason="Never" />
+    <disable_collisions link1="right_2_finger" link2="right_toolplate" reason="Adjacent" />
+    <disable_collisions link1="right_2_finger" link2="shoulder" reason="Never" />
+    <disable_collisions link1="right_3_1_finger" link2="right_3_finger" reason="Adjacent" />
+    <disable_collisions link1="right_3_1_finger" link2="right_toolplate" reason="Never" />
+    <disable_collisions link1="right_3_1_finger" link2="shoulder" reason="Never" />
+    <disable_collisions link1="right_3_finger" link2="right_toolplate" reason="Adjacent" />
+    <disable_collisions link1="right_3_finger" link2="shoulder" reason="Never" />
+    <disable_collisions link1="right_toolplate" link2="shoulder" reason="Never" />
+    <disable_collisions link1="shoulder" link2="wrist" reason="Never" />
+    <disable_collisions link1="shoulder" link2="wrist2" reason="Never" />
+    <disable_collisions link1="shoulder" link2="wrist3" reason="Never" />
+    <disable_collisions link1="wrist" link2="wrist2" reason="Adjacent" />
+    <disable_collisions link1="wrist" link2="wrist3" reason="Never" />
+    <disable_collisions link1="wrist2" link2="wrist3" reason="Adjacent" />
+</robot>

@@ -1,0 +1,828 @@
+<?xml version="1.0"?>
+<robot name="rsd" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:property name="bodywid" value="0.7875" />
+  <xacro:property name="bodylen" value="0.6" />
+
+  <xacro:property name="link1len" value="0.25" />
+  <xacro:property name="link1wid" value="0.1" />
+
+  <xacro:property name="link2len" value="0.45" />
+  <xacro:property name="link2wid" value="0.1" />
+
+  <xacro:property name="link3len" value="0.4" />
+  <xacro:property name="link3wid" value="0.1" />
+
+  <xacro:property name="wristjointrad" value="0.02" />
+
+  <xacro:property name="gripper_baserad" value="0.07" />
+
+  <xacro:property name="fingerwid" value="0.01" />
+  <xacro:property name="fingerlen" value="0.076" />
+
+  <xacro:property name="jointrad1" value="0.05" />
+  <xacro:property name="jointlen1" value="0.126" />
+
+  <xacro:property name="jointrad2" value="0.05" />
+  <xacro:property name="jointlen2" value="0.1" />
+
+  <xacro:property name="grapplelen" value="1" />
+  <xacro:property name="grapplewid" value="0.108" />
+
+  <xacro:property name="compboxwid" value="0.95" />
+  <xacro:property name="compboxlen" value="${bodylen}" />
+
+  <xacro:property name="beltxlen" value="0.6" />
+  <xacro:property name="beltxwid" value="0.05" />
+
+  <xacro:property name="beltylen" value="0.2" />
+  <xacro:property name="beltywid" value="0.05" />
+
+  <xacro:property name="pi" value="3.1415" />
+
+  <material name="blue">
+    <color rgba="0 0 0.8 1"/>
+  </material>
+
+  <material name="black">
+    <color rgba="0 0 0 1"/>
+  </material>
+
+  <material name="white">
+    <color rgba="1 1 1 1"/>
+  </material>
+
+  <material name="red">
+    <color rgba="1 0 0 1"/>
+  </material>
+
+  <xacro:macro name="default_inertial" params="mass">
+    <inertial>
+      <mass value="${mass}" />
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
+    </inertial>
+  </xacro:macro>
+
+  <xacro:property name="toolplatelen" value="0.01" />
+  <xacro:property name="toolplaterad" value="0.075" />
+
+  <xacro:macro name="toolplate" params="prefix x y z rx ry rz" >
+    <link name="${prefix}_toolplate">
+      <visual>
+        <geometry>
+          <cylinder length="${toolplatelen}" radius="${toolplaterad}"/>
+        </geometry>
+        <origin rpy="${rx} ${ry} ${rz}" xyz="${x} ${y} ${z}"/>
+        <material name="white"/>
+      </visual>
+      <collision>
+        <geometry>
+          <cylinder length="${toolplatelen}" radius="${toolplaterad}"/>
+        </geometry>
+        <origin rpy="${rx} ${ry} ${rz}" xyz="${x} ${y} ${z}"/>
+      </collision>
+      <xacro:default_inertial mass="2"/>
+    </link>
+  </xacro:macro>
+
+
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <cylinder radius="${bodywid}" length="${bodylen}"/>
+      </geometry>
+      <origin rpy="0 1.57075 0" xyz="0 0 0"/>
+      <material name="blue"/>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder radius="${bodywid}" length="${bodylen}"/>
+      </geometry>
+    </collision>
+    <xacro:default_inertial mass="30"/>
+  </link>
+
+  <link name="link1">
+    <visual>
+      <geometry>
+        <box size="${link1wid} ${link1wid} ${link1len}"/>
+      </geometry>
+      <origin xyz="0 0 ${link1len/2}" rpy="0 0 0"/>
+      <material name="white"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="${link1wid} ${link1wid} ${link1len}"/>
+      </geometry>
+      <origin xyz="0 0 ${link1len/2}" rpy="0 0 0"/>
+    </collision>
+    <xacro:default_inertial mass="10"/>
+  </link>
+
+  <joint name="base_link_to_link1" type="fixed">
+    <parent link="base_link"/>
+    <child link="link1"/>
+    <origin xyz="${bodylen/2 - jointrad1} 0 ${bodywid}" />
+  </joint>
+
+  <link name="base">
+    <visual>
+      <geometry>
+        <cylinder length="${jointlen1}" radius="${jointrad1}" />
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <material name="white" />
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder length="${jointrad1*2}" radius="${jointrad1}" />
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+    </collision>
+    <xacro:default_inertial mass="2"/>
+  </link>
+
+  <joint name="link1_to_base" type="continuous">
+    <parent link="link1"/>
+    <child link="base"/>
+    <origin xyz="0 0 ${link1len + jointlen1/2}" />
+    <axis xyz="0 0 1"/>
+    <limit effort="1000.0" velocity="0.5"/>
+  </joint>
+
+    <link name="connectlink">
+    <visual>
+      <geometry>
+        <box size="${link1wid} ${link1wid} 0.1"/>
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <material name="white"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="${link1wid} ${link1wid} 0.1"/>
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </collision>
+    <xacro:default_inertial mass="5"/>
+  </link>
+
+  <joint name="base_to_connectlink" type="fixed">
+    <parent link="base"/>
+    <child link="connectlink"/>
+    <origin xyz="0 0 ${jointlen1/2 + 0.05}" />
+  </joint>
+
+  <link name="shoulder">
+    <visual>
+      <geometry>
+        <cylinder length="${jointlen1}" radius="${jointrad1}" />
+      </geometry>
+      <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+      <material name="white" />
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder length="${jointlen1}" radius="${jointrad1}" />
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+    </collision>
+    <xacro:default_inertial mass="2"/>
+  </link>
+
+  <joint name="connectlink_to_shoulder" type="revolute">
+    <parent link="connectlink"/>
+    <child link="shoulder"/>
+    <origin xyz="0 ${jointlen1/2 + 0.05} 0" />
+    <axis xyz="0 1 0"/>
+    <limit effort="1000.0" lower="${-5*pi/4}" upper="${pi/4}" velocity="0.5"/>
+  </joint>
+
+  <link name="link2">
+    <visual>
+      <geometry>
+        <box size="${link2len} ${link2wid} ${link2wid}"/>
+      </geometry>
+      <origin rpy="${pi/2} 0 0" xyz="${link2len/2} 0 0"/>
+      <material name="white"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="${link2len} ${link2wid} ${link2wid}"/>
+      </geometry>
+      <origin rpy="${pi/2} 0 0" xyz="${link2len/2} 0 0"/>
+    </collision>
+    <xacro:default_inertial mass="10"/>
+  </link>
+
+  <joint name="shoulder_to_link2" type="fixed">
+    <parent link="shoulder"/>
+    <child link="link2"/>
+    <origin xyz="${jointrad1} 0 0" />
+  </joint>
+
+  <link name="elbow">
+    <visual>
+      <geometry>
+        <cylinder length="${jointlen1}" radius="${jointrad1}" />
+      </geometry>
+      <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+      <material name="white" />
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder length="${jointlen1}" radius="${jointrad1}" />
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+    </collision>
+    <xacro:default_inertial mass="2"/>
+  </link>
+
+  <joint name="link2_to_elbow" type="revolute">
+    <parent link="link2"/>
+    <child link="elbow"/>
+    <origin xyz="${(link2len + jointrad1)} ${0} 0" />
+    <axis xyz="0 1 0"/>
+    <limit effort="1000.0" lower="${-3*pi/4}" upper="${3*pi/4}" velocity="0.5"/>
+  </joint>
+
+  <link name="link3">
+    <visual>
+      <geometry>
+        <box size="${link3len} ${link3wid} ${link3wid}"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="${link3len/2} 0 0"/>
+      <material name="white"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="${link3len} ${link3wid} ${link3wid}"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="${link2len/2} 0 0"/>
+    </collision>
+    <xacro:default_inertial mass="10"/>
+  </link>
+
+  <joint name="elbow_to_link3" type="fixed">
+    <parent link="elbow"/>
+    <child link="link3"/>
+    <origin xyz="${-jointrad1} ${-jointlen1/2 - link3wid/2} 0" />
+  </joint>
+
+  <link name="wrist">
+    <visual>
+      <geometry>
+        <cylinder length="${jointlen2}" radius="${jointrad2}" />
+      </geometry>
+      <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+      <material name="white" />
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder length="${jointlen2}" radius="${jointrad2}" />
+      </geometry>
+      <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+    </collision>
+    <xacro:default_inertial mass="2"/>
+  </link>
+
+  <joint name="link3_to_wrist" type="continuous">
+    <parent link="link3"/>
+    <child link="wrist"/>
+    <origin xyz="${link3len + jointrad2} 0 0" />
+    <axis xyz="0 1 0"/>
+    <limit effort="1000.0" velocity="0.5"/>
+  </joint>
+
+  <link name="wrist2">
+    <visual>
+      <geometry>
+        <cylinder length="${jointlen2}" radius="${jointrad2}" />
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <material name="white" />
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder length="${jointrad2*2}" radius="${jointrad2}" />
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+    </collision>
+    <xacro:default_inertial mass="2"/>
+  </link>
+
+  <joint name="wrist_to_wrist2" type="revolute">
+    <parent link="wrist"/>
+    <child link="wrist2"/>
+    <origin xyz="${jointrad2*2} 0 0" />
+    <axis xyz="0 0 1"/>
+    <limit effort="1000.0" lower="${-pi/2}" upper="${pi/2}" velocity="0.5"/>
+  </joint>
+
+  <link name="wrist3">
+    <visual>
+      <geometry>
+        <cylinder length="${jointlen2}" radius="${jointrad2}" />
+      </geometry>
+      <origin xyz="${jointlen2/2} 0 0" rpy="0 ${pi/2} 0" />
+      <material name="white" />
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder length="${jointlen2}" radius="${jointrad2}" />
+      </geometry>
+      <origin xyz="${jointlen2/2} 0 0" rpy="0 ${pi/2} 0" />
+    </collision>
+    <xacro:default_inertial mass="2"/>
+  </link>
+
+  <joint name="wrist2_to_wrist3" type="revolute">
+    <parent link="wrist2"/>
+    <child link="wrist3"/>
+    <origin xyz="${jointrad2} 0 0" />
+    <axis xyz="1 0 0"/>
+    <limit effort="1000.0" lower="${-pi/2}" upper="${pi/2}" velocity="0.5"/>
+  </joint>
+
+  <link name="gripper_base">
+    <visual>
+      <geometry>
+        <sphere radius="${gripper_baserad}"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <material name="red"/>
+    </visual>
+    <collision>
+      <geometry>
+        <sphere radius="${gripper_baserad}"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+    </collision>
+    <xacro:default_inertial mass="4"/>
+  </link>
+
+  <joint name="wrist3_to_gripper_base" type="revolute">
+    <parent link="wrist3"/>
+    <child link="gripper_base"/>
+    <origin xyz="${jointlen2 + gripper_baserad} 0 0" />
+    <axis xyz="0 1 0"/>
+    <limit effort="1000.0" lower="0" upper="${pi/2}" velocity="0.5"/>
+  </joint>
+
+  <link name="gripper_base2">
+  </link>
+
+  <joint name="wrist3_to_gripper_base2" type="revolute">
+    <parent link="wrist3"/>
+    <child link="gripper_base2"/>
+    <origin xyz="${jointlen2 + gripper_baserad} 0 0" />
+    <axis xyz="0 0 1"/>
+    <limit effort="1000.0" lower="${-pi/2}" upper="0" velocity="0.5"/>
+  </joint>
+
+  <link name="gripper_base3">
+  </link>
+
+  <joint name="wrist3_to_gripper_base3" type="revolute">
+    <parent link="wrist3"/>
+    <child link="gripper_base3"/>
+    <origin xyz="${jointlen2 + gripper_baserad} 0 0" />
+    <axis xyz="0 0 1"/>
+    <limit effort="1000.0" lower="0" upper="${pi/2}" velocity="0.5"/>
+  </joint>
+
+  <xacro:toolplate prefix="1" x="0" y="${gripper_baserad}" z="0" rx="${pi/2}" ry="0" rz="0"/>
+  <xacro:toolplate prefix="2" x="0" y="${-gripper_baserad}" z="0" rx="${pi/2}" ry="0" rz="0"/>
+
+  <joint name="ee_tp_1" type="fixed">
+    <parent link="gripper_base2"/>
+    <child link="1_toolplate"/>
+    <origin xyz="0 0 0" />
+  </joint>
+
+  <joint name="ee_tp_2" type="fixed">
+    <parent link="gripper_base3"/>
+    <child link="2_toolplate"/>
+    <origin xyz="0 0 0" />
+  </joint>
+
+
+  <link name="grapple">
+    <visual>
+      <geometry>
+        <box size="${grapplelen/2} ${grapplewid} ${grapplewid}"/>
+      </geometry>
+      <origin rpy="0 ${pi/2} 0" xyz="0 0 ${-grapplelen/4}"/>
+      <material name="white"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="${grapplelen/2} ${grapplewid} ${grapplewid}"/>
+      </geometry>
+      <origin rpy="0 ${pi/2} 0" xyz="${-grapplelen/4} 0 0"/>s
+    </collision>
+    <xacro:default_inertial mass="10"/>
+  </link>
+
+  <joint name="base_to_grapple" type="revolute">
+    <parent link="base_link"/>
+    <child link="grapple"/>
+    <origin xyz="${bodylen/2} 0 0" />
+    <axis xyz="0 1 0"/>
+    <limit effort="1000.0" lower="${-pi/2}" upper="0" velocity="0.5"/>
+  </joint>
+
+  <link name="grapple2">
+    <visual>
+      <geometry>
+        <box size="${grapplelen/2} ${3*grapplewid/4} ${3*grapplewid/4}"/>
+      </geometry>
+      <origin rpy="0 ${pi/2} 0" xyz="0 0 ${-grapplelen/4}"/>
+      <material name="white"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="${grapplelen/2} ${grapplewid/2} ${grapplewid}"/>
+      </geometry>
+      <origin rpy="0 ${pi/2} 0" xyz="${-grapplelen/4} 0 0"/>s
+    </collision>
+    <xacro:default_inertial mass="10"/>
+  </link>
+
+  <joint name="grapple_to_grapple2" type="prismatic">
+    <parent link="grapple"/>
+    <child link="grapple2"/>
+    <origin xyz="0 0 0" />
+    <axis xyz="0 0 1"/>
+    <limit effort="1000.0" lower="${-grapplelen/2}" upper="0" velocity="0.5"/>
+  </joint>
+
+
+  <xacro:property name="boomlen" value="0.3" />
+  <xacro:property name="boomwid" value="0.05" />
+
+  <link name="boom1">
+    <visual>
+      <geometry>
+        <box size="${boomlen} ${boomwid} ${boomwid}"/>
+      </geometry>
+      <origin rpy="0 ${pi/2} 0" xyz="0 0 ${boomlen/4}"/>
+      <material name="white"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="${boomlen} ${boomwid} ${boomwid}"/>
+      </geometry>
+      <origin rpy="0 ${pi/2} 0" xyz="${boomlen/4} 0 0"/>
+    </collision>
+    <xacro:default_inertial mass="10"/>
+  </link>
+
+  <joint name="base_to_boom1" type="fixed">
+    <parent link="base_link"/>
+    <child link="boom1"/>
+    <origin xyz="0 ${bodylen/2} ${bodywid-0.05}" />
+  </joint>
+
+  <link name="boom2">
+    <visual>
+      <geometry>
+        <box size="${boomlen} ${9*boomwid/10} ${9*boomwid/10}"/>
+      </geometry>
+      <origin rpy="0 ${pi/2} 0" xyz="0 0 ${boomlen/4}"/>
+      <material name="white"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="${boomlen} ${boomwid/2} ${boomwid}"/>
+      </geometry>
+      <origin rpy="0 ${pi/2} 0" xyz="0 0 ${boomlen/4}"/>s
+    </collision>
+    <xacro:default_inertial mass="10"/>
+  </link>
+
+  <joint name="boom1_to_boom2" type="prismatic">
+    <parent link="boom1"/>
+    <child link="boom2"/>
+    <origin xyz="0 0 0" />
+    <axis xyz="0 0 1"/>
+    <limit effort="1000.0" lower="0" upper="${boomlen}" velocity="0.5"/>
+  </joint>
+
+  <link name="boom3">
+    <visual>
+      <geometry>
+        <box size="${boomlen} ${8*boomwid/10} ${8*boomwid/10}"/>
+      </geometry>
+      <origin rpy="0 ${pi/2} 0" xyz="0 0 ${boomlen/4}"/>
+      <material name="white"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="${boomlen} ${boomwid/2} ${boomwid}"/>
+      </geometry>
+      <origin rpy="0 ${pi/2} 0" xyz="0 0 ${boomlen/4}"/>s
+    </collision>
+    <xacro:default_inertial mass="10"/>
+  </link>
+
+  <joint name="boom2_to_boom3" type="prismatic">
+    <parent link="boom2"/>
+    <child link="boom3"/>
+    <origin xyz="0 0 0" />
+    <axis xyz="0 0 1"/>
+    <limit effort="1000.0" lower="0" upper="${boomlen}" velocity="0.5"/>
+  </joint>
+
+  <link name="boom4">
+    <visual>
+      <geometry>
+        <box size="${boomlen} ${7*boomwid/10} ${7*boomwid/10}"/>
+      </geometry>
+      <origin rpy="0 ${pi/2} 0" xyz="0 0 ${boomlen/4}"/>
+      <material name="white"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="${boomlen} ${boomwid/2} ${boomwid}"/>
+      </geometry>
+      <origin rpy="0 ${pi/2} 0" xyz="0 0 ${boomlen/4}"/>s
+    </collision>
+    <xacro:default_inertial mass="10"/>
+  </link>
+
+  <joint name="boom3_to_boom4" type="prismatic">
+    <parent link="boom3"/>
+    <child link="boom4"/>
+    <origin xyz="0 0 0" />
+    <axis xyz="0 0 1"/>
+    <limit effort="1000.0" lower="0" upper="${boomlen}" velocity="0.5"/>
+  </joint>
+
+  <link name="boom5">
+    <visual>
+      <geometry>
+        <box size="${boomlen} ${6*boomwid/10} ${6*boomwid/10}"/>
+      </geometry>
+      <origin rpy="0 ${pi/2} 0" xyz="0 0 ${boomlen/4}"/>
+      <material name="white"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="${boomlen} ${boomwid/2} ${boomwid}"/>
+      </geometry>
+      <origin rpy="0 ${pi/2} 0" xyz="0 0 ${boomlen/4}"/>s
+    </collision>
+    <xacro:default_inertial mass="10"/>
+  </link>
+
+  <joint name="boom4_to_boom5" type="prismatic">
+    <parent link="boom4"/>
+    <child link="boom5"/>
+    <origin xyz="0 0 0" />
+    <axis xyz="0 0 1"/>
+    <limit effort="1000.0" lower="0" upper="${boomlen}" velocity="0.5"/>
+  </joint>
+
+  <link name="boom6">
+    <visual>
+      <geometry>
+        <box size="${boomlen} ${5*boomwid/10} ${5*boomwid/10}"/>
+      </geometry>
+      <origin rpy="0 ${pi/2} 0" xyz="0 0 ${boomlen/4}"/>
+      <material name="white"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="${boomlen} ${boomwid/2} ${boomwid}"/>
+      </geometry>
+      <origin rpy="0 ${pi/2} 0" xyz="0 0 ${boomlen/4}"/>s
+    </collision>
+    <xacro:default_inertial mass="10"/>
+  </link>
+
+  <joint name="boom5_to_boom6" type="prismatic">
+    <parent link="boom5"/>
+    <child link="boom6"/>
+    <origin xyz="0 0 0" />
+    <axis xyz="0 0 1"/>
+    <limit effort="1000.0" lower="0" upper="${boomlen}" velocity="0.5"/>
+  </joint>
+
+  <link name="boom7">
+    <visual>
+      <geometry>
+        <box size="${boomlen} ${4*boomwid/10} ${4*boomwid/10}"/>
+      </geometry>
+      <origin rpy="0 ${pi/2} 0" xyz="0 0 ${boomlen/4}"/>
+      <material name="white"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="${boomlen} ${boomwid/2} ${boomwid}"/>
+      </geometry>
+      <origin rpy="0 ${pi/2} 0" xyz="0 0 ${boomlen/4}"/>s
+    </collision>
+    <xacro:default_inertial mass="10"/>
+  </link>
+
+  <joint name="boom6_to_boom7" type="prismatic">
+    <parent link="boom6"/>
+    <child link="boom7"/>
+    <origin xyz="0 0 0" />
+    <axis xyz="0 0 1"/>
+    <limit effort="1000.0" lower="0" upper="${boomlen}" velocity="0.5"/>
+  </joint>
+
+  <link name="boom8">
+    <visual>
+      <geometry>
+        <box size="${boomlen} ${3*boomwid/10} ${3*boomwid/10}"/>
+      </geometry>
+      <origin rpy="0 ${pi/2} 0" xyz="0 0 ${boomlen/4}"/>
+      <material name="white"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="${boomlen} ${boomwid/2} ${boomwid}"/>
+      </geometry>
+      <origin rpy="0 ${pi/2} 0" xyz="0 0 ${boomlen/4}"/>s
+    </collision>
+    <xacro:default_inertial mass="10"/>
+  </link>
+
+  <joint name="boom7_to_boom8" type="prismatic">
+    <parent link="boom7"/>
+    <child link="boom8"/>
+    <origin xyz="0 0 0" />
+    <axis xyz="0 0 1"/>
+    <limit effort="1000.0" lower="0" upper="${boomlen}" velocity="0.5"/>
+  </joint>
+
+  <link name="boom9">
+    <visual>
+      <geometry>
+        <box size="${boomlen} ${2*boomwid/10} ${2*boomwid/10}"/>
+      </geometry>
+      <origin rpy="0 ${pi/2} 0" xyz="0 0 ${boomlen/4}"/>
+      <material name="white"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="${boomlen} ${boomwid/2} ${boomwid}"/>
+      </geometry>
+      <origin rpy="0 ${pi/2} 0" xyz="0 0 ${boomlen/4}"/>s
+    </collision>
+    <xacro:default_inertial mass="10"/>
+  </link>
+
+  <joint name="boom8_to_boom9" type="prismatic">
+    <parent link="boom8"/>
+    <child link="boom9"/>
+    <origin xyz="0 0 0" />
+    <axis xyz="0 0 1"/>
+    <limit effort="1000.0" lower="0" upper="${boomlen}" velocity="0.5"/>
+  </joint>
+
+  <link name="boom10">
+    <visual>
+      <geometry>
+        <box size="${boomlen} ${1*boomwid/10} ${1*boomwid/10}"/>
+      </geometry>
+      <origin rpy="0 ${pi/2} 0" xyz="0 0 ${boomlen/4}"/>
+      <material name="white"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="${boomlen} ${boomwid/2} ${boomwid}"/>
+      </geometry>
+      <origin rpy="0 ${pi/2} 0" xyz="0 0 ${boomlen/4}"/>s
+    </collision>
+    <xacro:default_inertial mass="10"/>
+  </link>
+
+  <joint name="boom9_to_boom10" type="prismatic">
+    <parent link="boom9"/>
+    <child link="boom10"/>
+    <origin xyz="0 0 0" />
+    <axis xyz="0 0 1"/>
+    <limit effort="1000.0" lower="0" upper="${boomlen}" velocity="0.5"/>
+  </joint>
+
+  <link name="camera">
+    <visual>
+      <geometry>
+        <box size="0.1 0.1 0.1"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <material name="white"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.1 0.1 0.1"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>s
+    </collision>
+    <xacro:default_inertial mass="1"/>
+  </link>
+
+  <joint name="boom10_to_camera" type="fixed">
+    <parent link="boom10"/>
+    <child link="camera"/>
+    <origin xyz="0 0 ${boomlen-0.02}"/>
+  </joint>
+
+
+
+  <xacro:macro name="finger" params="prefix1 prefix2 x y z rx ry rz" >
+    <link name="${prefix1}_${prefix2}_finger">
+      <visual>
+        <geometry>
+          <box size="${fingerwid} ${fingerwid} ${fingerlen}"/>
+        </geometry>
+        <origin rpy="${rx} ${ry} ${rz}" xyz="${x} ${y} ${z}"/>
+        <material name="white"/>
+      </visual>
+      <collision>
+        <geometry>
+          <box size="${fingerwid} ${fingerwid} ${fingerlen}"/>
+        </geometry>
+        <origin rpy="${rx} ${ry} ${rz}" xyz="${x} ${y} ${z}"/>
+      </collision>
+      <xacro:default_inertial mass="2"/>
+    </link>
+  </xacro:macro>
+
+  <xacro:macro name="gripper" params="prefix x y z rx ry rz link" >
+
+    <xacro:toolplate prefix="${prefix}" x="0" y="0" z="0" rx="0" ry="0" rz="0"/>
+
+    <joint name="${link}_to_tp_${prefix}" type="fixed">
+      <parent link="${link}"/>
+      <child link="${prefix}_toolplate"/>
+      <origin xyz="${x} ${y} ${z}" rpy="${rx} ${ry} ${rz}" />
+    </joint>
+
+    <xacro:finger prefix1="${prefix}" prefix2="1" x="0" y="0" z="${fingerlen/2}" rx="0" ry="0" rz="0"/>
+
+    <joint name="toolplate_to_${prefix}_finger1" type="revolute">
+      <parent link="${prefix}_toolplate"/>
+      <child link="${prefix}_1_finger"/>
+      <origin xyz="0.04 0 0" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+      <limit effort="1000.0" lower="0" upper="${pi/8}" velocity="0.5"/>
+    </joint>
+
+    <xacro:finger prefix1="${prefix}" prefix2="1_1" x="0" y="0" z="${fingerlen/2}" rx="0" ry="0" rz="0"/>
+
+    <joint name="${prefix}_1_finger_to_finger_1_1" type="fixed">
+      <parent link="${prefix}_1_finger"/>
+      <child link="${prefix}_1_1_finger"/>
+      <origin xyz="0 0 ${fingerlen}" rpy="0 ${-pi/16} 0"/>
+    </joint>
+
+    <xacro:finger prefix1="${prefix}" prefix2="2" x="0" y="0" z="${fingerlen/2}" rx="0" ry="0" rz="0"/>
+
+    <joint name="toolplate_to_${prefix}_2_finger" type="revolute">
+      <parent link="${prefix}_toolplate"/>
+      <child link="${prefix}_2_finger"/>
+      <origin xyz="-0.04 0.04 0" rpy="0 0 ${-3*pi/16}" />
+      <axis xyz="0 1 0"/>
+      <limit effort="1000.0" lower="${-pi/8}" upper="0" velocity="0.5"/>
+    </joint>
+
+    <xacro:finger prefix1="${prefix}" prefix2="2_1" x="0" y="0" z="${fingerlen/2}" rx="0" ry="0" rz="0"/>
+
+    <joint name="${prefix}_finger2_to_finger2_1" type="fixed">
+      <parent link="${prefix}_2_finger"/>
+      <child link="${prefix}_2_1_finger"/>
+      <origin xyz="0 0 ${fingerlen}" rpy="0 ${pi/16} 0"/>
+    </joint>
+
+    <xacro:finger prefix1="${prefix}" prefix2="3" x="0" y="0" z="${fingerlen/2}" rx="0" ry="0" rz="0"/>
+
+    <joint name="${prefix}_toolplate_to_finger3" type="revolute">
+      <parent link="${prefix}_toolplate"/>
+      <child link="${prefix}_3_finger"/>
+      <origin xyz="-0.04 -0.04 0" rpy="0 0 ${3*pi/16}" />
+      <axis xyz="0 1 0"/>
+      <limit effort="1000.0" lower="${-pi/8}" upper="0" velocity="0.5"/>
+    </joint>
+
+    <xacro:finger prefix1="${prefix}" prefix2="3_1" x="0" y="0" z="${fingerlen/2}" rx="0" ry="0" rz="0"/>
+
+    <joint name="${prefix}_finger3_to_finger3_1" type="fixed">
+      <parent link="${prefix}_3_finger"/>
+      <child link="${prefix}_3_1_finger"/>
+      <origin xyz="0 0 ${fingerlen}" rpy="0 ${pi/16} 0"/>
+    </joint>
+
+  </xacro:macro>
+
+  <xacro:gripper prefix="left" x="0" y="-0.3" z="${bodywid}" rx="0" ry="0" rz="0" link="base_link"/>
+  <xacro:gripper prefix="right" x="-0.2" y="-0.2" z="${bodywid}" rx="0" ry="0" rz="0" link="base_link"/>
+  <xacro:gripper prefix="arm" x="${gripper_baserad}" y="0" z="0" rx="0" ry="${pi/2}" rz="0" link="gripper_base"/>
+
+  
+
+</robot>
